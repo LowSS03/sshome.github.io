@@ -1,0 +1,173 @@
+<?php
+
+include("dbConn.php");
+session_start();
+$query =  "SELECT * FROM hotel";
+$result = mysqli_query($connection, $query)
+
+// if($_SERVER['REQUEST_METHOD'] == "POST"){
+//     $hotelname = $_POST['hotelname'];
+// }
+?>
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #datepicker{
+
+            margin-left: 20%;
+            margin-right: 20%;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            
+            height: 100px;
+        }
+
+        .content{
+            padding-top: 30px;
+            padding-bottom: 30px;
+            text-align: center;
+            border: 2px solid yellow;
+        }
+        #datefield{
+            
+            height: 30px;
+            width: 200px;
+            margin-right: 20px;
+            margin-left: 20px;
+        }
+
+        #citylabel{
+            margin-right: 20px;
+            width: 200px;
+            height: 30px;
+        }
+
+        #hotelcontent{
+            margin-bottom: 10px;
+            height: 30%;
+            width: 60%;
+            float: right;
+            margin-right: 5%;
+            border: 5px solid rgba(160, 203, 229, 0.8);
+        }
+        
+        #imageposition{
+            float: left;
+        }
+
+        #hoteldes{
+            float: right;
+        }
+
+        img {
+  float: left;
+  padding-left: 20px;
+  padding-bottom: 20px;
+  padding-right: 30px;
+}
+
+#contentright{
+    float:right;
+}
+
+span{
+    padding-left: 10px;
+    padding-right: 20px;
+}
+#button{
+    margin-right: 20px;
+    background-color: rgba(76, 68, 239, 0.8);
+    /* color: yellow;
+    width: 150px; */
+    padding: 5px 10px 5px 10px;
+    text-align:center;
+    border-radius: 2.5px;
+    color: white;
+}
+
+a{
+    color: white;
+    text-decoration: none;
+}
+
+#filter{
+    margin-left: 5%;
+    background-color: blue;
+    width: 20%;
+    height: 300px;
+}
+    </style>
+</head>
+<body>
+    <div id="datepicker">
+        
+        <div class="content">
+        <label for="city" id = ""citylabel>Choose the City:</label>
+            <select name="city" id="citylabel">
+                <option value="">Please Select The City:</option>
+                <option value="penang">Penang</option>
+                <option value="perak">Perak</option>
+                <option value="selangor">Selangor</option>
+                <option value="kl">Kuala Lumpur</option>
+                <option value="johor">Johor</option>
+                <option value="malacca">Malacca</option>
+                <option value="kedah">Kedah</option>
+                <option value="negeri">Negeri Sembilan</option>
+            </select>
+        <label for="checkin">Check In Date</label>
+        <input type="date" name="tf_checkin" id="datefield">
+        <label for="checkout">Check Out Date</label>
+        <input type="date" name="tf_checkout" id="datefield">
+        </div>
+    </div>
+
+    <?php 
+        while($row = mysqli_fetch_assoc($result)){
+    ?>
+    <form action="" method="post">
+    <div id="hotelcontent">
+       
+       <p><img src="data:image;base64,<?php echo base64_encode($row['hotel_image']); ?>" alt="Hotel Image" height="100" width="100"></p>
+       <p name = "hotelname"><?php echo $row['hotel_name']; ?></p>
+       <!-- <input type="hidden" name="HotelID" value="<?php echo $row['booking_id'];?>"> -->
+       <p><?php echo $row['hotel_email']; ?></p>
+       <p></p>
+   
+       <div id="contentright">
+           Very Good <span>10.0</span>
+           <p></p>
+           <!-- <div id="button"><p><a href="testhotelname.php">See Availability</a></p></div> -->
+           <!-- <input id = "button" type="submit" value="See Availability"></input> -->
+           <a id="button" href="room.php?hotelID=<?php echo $row['hotel_id']; ?>" class=”button”> See </a>
+       </div>
+   
+   
+       </div>
+    </form>
+    <?php 
+}
+mysqli_close($connection);
+
+ ?>
+
+    <div id="filter">
+    <p><b>Filter By:</b></p>
+    <hr>
+    <p><b>Price:</b></p>
+    <p><input type="checkbox" name="" id="">Below RM200</p>
+    <p><input type="checkbox" name="" id="">Below RM300</p>
+    <p><input type="checkbox" name="" id="">Below RM400</p>
+    <p><input type="checkbox" name="" id="">Below RM500</p>
+    <p><input type="checkbox" name="" id="">Above RM500</p>
+    </div>
+</body>
+</html>

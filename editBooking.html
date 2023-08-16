@@ -1,0 +1,126 @@
+<?php
+session_start();
+include 'dbConn.php';
+$bookingID=$_GET['bookingID'];
+
+if (isset($_POST['btnUpdate'])){
+    $checkin = $_POST['checkin'];
+    $checkout = $_POST['checkout'];
+    $day = $_POST['day'];
+    $service = $_POST['serviceTax'];
+    $total = $_POST['total'];
+    $updateQuery = "UPDATE `booking` 
+    INNER JOIN customer ON booking.customer_id=customer.customer_id 
+    INNER JOIN room ON booking.room_id=room.room_id
+    INNER JOIN hotel ON booking.hotel_id=hotel.hotel_id
+    SET `checkin_date`='$checkin',`checkout_date`='$checkout',`day`='$day', `service_charge`='$service', `total_price`='$total' WHERE booking.booking_id='$bookingID'";
+    if (mysqli_query($connection, $updateQuery)){
+        echo "<script>";
+        echo "alert('Room Updated Successfully');";
+        echo "window.location = 'roomList.php';";
+        echo "</script>";
+    } 
+    else {
+        echo 'Sorry, Something Went Wrong. Please Try Again.';
+    }   
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+
+</head>
+<body>
+<h2>Product Information</h2>
+    <?php
+    $query = "SELECT * FROM booking 
+    INNER JOIN customer ON booking.customer_id=customer.customer_id 
+    INNER JOIN room ON booking.room_id=room.room_id
+    INNER JOIN hotel ON booking.hotel_id=hotel.hotel_id
+    WHERE booking.booking_id='$bookingID'";
+    $result = mysqli_query($connection, $query);
+     $row = mysqli_fetch_assoc($result); //$row[0]; $row['email']
+     $count = mysqli_num_rows($result); //1 or 0
+     if ($count ==1){
+     ?>
+
+    <form action="#" method="POST">
+        <table>
+            <tr>
+                <td>Booking ID : </td>
+                <td>
+                    <?php echo $row['booking_id'];?>
+                    <input type="hidden" name="HotelID" value="<?php echo $row['booking_id'];?>">
+                </td>
+            </tr>   
+
+            <tr>
+                <td>Customer Name : </td>
+                <td>
+                    <?php echo $row['customer_name'];?>
+                </td>
+            </tr>  
+            
+            <tr>
+                <td>Room Type : </td>
+                <td>
+                    <?php echo $row['room_type']; ?>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Check-In Date : </td>
+                <td>
+                <input type="date" name="checkin" value="<?php echo date('Y-m-d', strtotime($row['checkin_date'])); ?>">
+                </td>
+            </tr>
+
+            <tr>
+                <td>Check-Out Date : </td>
+                <td>
+                <input type="date" name="checkout" value="<?php echo date('Y-m-d', strtotime($row['checkout_date'])); ?>">
+                </td>
+            </tr>
+
+            <tr>
+                <td>Days : </td>
+                <td>
+                    <input type="text" value="<?php echo $row['day']; ?> ">
+                </td>
+            </tr>
+
+            <tr>
+                <td>Service Tax : </td>
+                <td>
+                    <input type="decimal" name="serviceTax" value="<?php echo $row['service_charge']; ?> ">
+                </td>
+            </tr>
+
+            <tr>
+                <td>Total : </td>
+                <td>
+                    <input type="decimal" name="total" value="<?php echo $row['total_price']; ?> ">
+                </td>
+            </tr>
+ 
+        </table>
+            <a href="Product List.php"><input type="button" value="Back" id="btn" onclick="history.go(-1)"></a>
+            <a href="Product List.php"><input type="submit" value="Update" name="btnUpdate"></a>
+
+    </form>
+
+    <?php
+    }
+    else{
+    echo 'Record Not Found.';
+    }
+    ?>
+
+</body>
+</html>

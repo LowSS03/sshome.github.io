@@ -1,0 +1,152 @@
+<?php
+session_start();
+include 'dbConn.php';
+
+if (isset($_POST['roomType'])) {
+    $roomType = $_POST['roomType'];
+    if ($roomType !== "All") {
+        $query = "SELECT * FROM room 
+        INNER JOIN hotel ON room.hotel_id = hotel.hotel_id
+        WHERE room_type = '$roomType'";
+    } else {
+        $query = "SELECT * FROM hotel 
+        INNER JOIN room ON room.hotel_id = hotel.hotel_id";
+    }
+} else {
+    $roomType = "All"; // Set default value to "All"
+    $query = "SELECT * FROM hotel 
+    INNER JOIN room ON room.hotel_id = hotel.hotel_id";
+}
+
+$result = mysqli_query($connection, $query);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            /* justify-content: space-between; */
+        }
+
+        .card {
+            width: 30%;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-type {
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            margin-bottom: 10px;
+        }
+
+        .card-price {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-status {
+            margin-bottom: 10px;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .card-actions a {
+            margin-left: 5px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .card-actions a:hover {
+            text-decoration: underline;
+        }
+
+        .booked-message {
+            color: #dc3545;
+        }
+
+        .icon {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <form action="#" method="POST">
+        Select Category: 
+            <select name="roomType" onchange="this.form.submit()">
+                <option value="All" <?php if($roomType == 'All') { echo 'selected'; } ?>>All</option>
+                <option value="Single Room" <?php if($roomType == 'Single Room') { echo 'selected'; } ?>>Single Room</option>
+                <option value="Double Room" <?php if($roomType == 'Double Room') { echo 'selected'; } ?>>Double Room</option>
+                <option value="Triple Room" <?php if($roomType == 'Triple Room') { echo 'selected'; } ?>>Triple Room</option>
+                <option value="President Room" <?php if($roomType == 'President Room') { echo 'selected'; } ?>>President Room</option>
+            </select>
+    </form>
+
+        <div class="card-container">
+        <?php
+        while ($row = mysqli_fetch_assoc($result)){
+        ?>
+        <div class="card">
+            <img src="data:image;base64,<?php echo base64_encode($row['room_image']); ?>" alt="Room Image">
+            <div class="card-title"><?php echo $row['room_id']; ?> <?php echo $row['hotel_name']; ?></div>
+            <div class="card-type"><?php echo $row['room_type']; ?></div>
+            <div class="card-description"><?php echo $row['room_description']; ?></div>
+            <div class="card-price">Price: RM<?php echo $row['room_price']; ?></div>
+            <div class="card-status">
+                <?php
+                if ($row['room_status'] == 'Occupied') {
+                    echo '<span class="booked-message">Room Booked</span>';
+                } else {
+                    echo 'Room Status: ' . $row['room_status'];
+                }
+                ?>
+            </div>
+            <div class="card-actions">
+                <?php if ($row['room_status'] != 'Occupied') { ?>
+                    <a href="customerBook.php?roomID=<?php echo $row['room_id']; ?>"><i class="fa fa-plus-square icon"></i>Book</a>
+                <?php } ?>
+                <!-- <a href="editRoom.php?roomID=<?php echo $row['room_id']; ?>"><i class="fa fa-edit icon"></i>Edit</a>
+                <a href="deleteRoom.php?roomID=<?php echo $row['room_id']; ?>"><i class="fa fa-remove icon"></i>Delete</a> -->
+            </div>
+        </div>
+        <?php
+        }
+        mysqli_close($connection);
+        ?>
+    </div>
+
+</body>
+</html>

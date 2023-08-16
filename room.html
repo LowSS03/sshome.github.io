@@ -1,0 +1,183 @@
+<?php
+session_start();
+include 'dbConn.php';
+$hotelID = $_GET['hotelID'];
+
+// Query to fetch hotel information
+$hotelQuery = "SELECT * FROM hotel WHERE hotel_id = '$hotelID'";
+$hotelResult = mysqli_query($connection, $hotelQuery);
+$hotelRow = mysqli_fetch_assoc($hotelResult);
+
+// Query to fetch room information
+$query = "SELECT * FROM room 
+          INNER JOIN hotel ON hotel.hotel_id=room.hotel_id
+          WHERE room.hotel_id = '$hotelID'";
+$result = mysqli_query($connection, $query);
+$totalRooms = mysqli_num_rows($result);
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #content{
+            background-color:rgba(228, 230, 240, 0.8);
+            height: 350px;
+            
+        }
+        img{
+            
+            border-radius: 5%;
+            float:left;
+         
+        }
+        #imageform{
+            padding-top: 30px;
+            padding-left: 10%;
+            padding-bottom: 30px;
+            padding-right: 50px;
+            float: left;
+        }
+        #hotelinfo{
+            padding-top: 100px;
+            margin-left: 30px;
+        }
+        #hotelname{
+            font-size: 35px;
+        }
+        #contentright{
+            padding-left: 50px;
+            padding-botttom: 80px;
+            padding-right: 50px;
+            float: right;
+            border-left: 2px solid rgba(169, 154, 175, 0.85);
+            height: 150px;
+        }
+
+        #select{
+            font-size: 35px;
+            margin-left: 10%;
+            margin-top: 30px;
+        }
+
+        #notel{
+            padding-top: 10px;
+        }
+        
+        #noroom{
+            font-size: 25px;
+            margin-left: 10%;
+            color: rgba(84, 56, 95, 0.83);
+        }
+        
+        
+        #bookbutton{
+            float: right;
+        }
+
+        #displayroom{
+            border: 2px solid green;
+            height: 30%;
+            margin-left: 10%;
+            margin-right: 10%;
+        }
+
+        #roomimg{
+            
+            padding-left: 20px;
+            padding-top: 25px;
+            
+        }
+
+        #showroom{
+            margin-bottom: 10px;
+            height: 30%;
+            width: 80%;
+            float: right;
+            margin-right: 10%;
+            padding-bottom: 25px;
+            border: 0.5px solid rgba(160, 203, 229, 0.8);
+            border-radius: 25px;
+        }
+        #roomdetails{
+            float: right;
+            padding-right: 30px;
+
+        }
+
+        #button{
+    margin-right: 20px;
+    background-color: rgba(119, 149, 12, 0.83);
+    /* color: yellow;
+    width: 150px; */
+    padding: 5px 10px 5px 10px;
+    text-align:center;
+    border-radius: 2.5px;
+}
+
+a{
+    color: white;
+    text-decoration: none;
+}
+
+#roomdes{
+    padding: 25px;
+}
+    </style>
+</head>
+<body>
+    <div id="content">
+        <div id="imageform">
+            <img src="data:image;base64,<?php echo base64_encode($hotelRow['hotel_image']); ?>" alt="Hotel Image" height="100" width="100">
+        </div>
+        <div id="hotelinfo">
+            <div id="hotelname"><b><?php echo $hotelRow['hotel_name']; ?></b></div>
+        </div>
+        <div id="contentright">
+            <p></p>
+            <p><?php echo $hotelRow['address']; ?></p>
+            <p><?php echo $hotelRow['postcode']; ?></p>
+            <p><?php echo $hotelRow['state']; ?></p>
+            <p></p>
+            <p id="notel"><?php echo $hotelRow['hotel_notel']; ?></p>
+            <p></p>
+        </div>
+    </div>
+
+    <div id="select"><b>Select your Room</b></div>
+    <p></p>
+    <p></p>
+    <p id="noroom"><?php echo $totalRooms; ?> room(s) found</p>
+
+    <?php
+    while ($row = mysqli_fetch_assoc($result)) {
+        ?>
+
+        <div id="showroom">
+            <p>
+                <img src="data:image;base64,<?php echo base64_encode($row['room_image']); ?>" alt="Room Image" height="100" width="100">
+            </p>
+            <div id="roomdes">
+                <p><?php echo $row['room_id']; ?></p>
+                <p><?php echo $row['room_description']; ?></p>
+            </div>
+
+            <div id="roomdetails">
+                <div><?php echo $row['room_price']; ?></div>
+                <div>MYR Per Night</div>
+                <p></p>
+                <div id="button">
+                    <p><a href="">Book Room</a></p>
+                </div>
+            </div>
+        </div>
+
+    <?php
+    }
+    ?>
+</body>
+</html>

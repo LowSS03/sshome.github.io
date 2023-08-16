@@ -1,0 +1,122 @@
+<?php
+session_start();
+include 'dbConn.php';
+
+
+
+if (isset($_POST['roomType'])){
+    $roomType = $_POST['roomType'];
+    if($roomType !== "All"){
+        $query = "SELECT * FROM room WHERE hotel_id = {$_SESSION['hotelID']} AND room_type = '$roomType'";
+    } else{
+        $query = "SELECT * FROM room WHERE hotel_id=". $_SESSION["hotelID"];
+    }
+} else {
+    $roomType = "All"; // Set default value to "All"
+    $query = "SELECT * FROM room WHERE hotel_id=". $_SESSION["hotelID"];
+}
+$result = mysqli_query($connection, $query); 
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .book-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .book-link:hover {
+            text-decoration: underline;
+        }
+
+        .booked-message {
+            color: #dc3545;
+        }
+
+        .icon {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <form action="#" method="POST">
+        Select Category: 
+            <select name="roomType" onchange="this.form.submit()">
+                <option value="All" <?php if($roomType == 'All') { echo 'selected'; } ?>>All</option>
+                <option value="Single Room" <?php if($roomType == 'Single Room') { echo 'selected'; } ?>>Single Room</option>
+                <option value="Double Room" <?php if($roomType == 'Double Room') { echo 'selected'; } ?>>Double Room</option>
+                <option value="Triple Room" <?php if($roomType == 'Triple Room') { echo 'selected'; } ?>>Triple Room</option>
+                <option value="President Room" <?php if($roomType == 'President Room') { echo 'selected'; } ?>>President Room</option>
+            </select>
+    </form>
+            
+<table border=1>
+            <tr>
+                <th>Room ID</th>
+                <th>Room Image</th>
+                <th>Room Description</th>
+                <th>Room Type</th>
+                <th>Room Price (RM)</th>
+                <th>Room Status</th>
+                <th align="center">Option</th>
+            </tr>
+
+
+
+            <?php
+            while ($row = mysqli_fetch_assoc($result)){
+            ?>
+
+                <tr>
+                    <th><?php echo $row['room_id']; ?></th>
+                    <th><?php echo '<img src="data:image;base64,' . base64_encode($row['room_image']) . '" height="175" width="175">';?></th>
+                    <th><?php echo $row['room_description']; ?></th>
+                    <th><?php echo $row['room_type']; ?></th>
+                    <th><?php echo $row['room_price']; ?></th>
+                    <th><?php echo $row['room_status']; ?></th>
+                    <th align="center">
+                        <?php if ($row['room_status'] !== 'Occupied') { ?>
+                            <a href="hotelBook.php?roomID=<?php echo $row['room_id']; ?>">Book<i class="fa fa-plus-square"></i></a>
+                        <?php } else { ?>
+                            <span>Room booked<i class="fa fa-remove"></i></span>
+                        <?php } ?>
+                        <br/>
+                        <a href="editRoom.php?roomID=<?php echo $row['room_id']; ?>">Edit<i class="fa fa-edit"></i></a>
+                        <br/>
+                        <a href="deleteRoom.php?roomID=<?php echo $row['room_id']; ?>">Delete<i class="fa fa-trash"></i></a>
+                    </th>
+                </tr>
+    </div>
+
+
+
+                <?php
+            }
+                mysqli_close($connection);
+                ?>
+
+            </table>
+
+</body>
+</html>

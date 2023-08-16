@@ -1,0 +1,97 @@
+<?php
+session_start();
+include 'dbConn.php';
+
+if (isset($_POST['roomType'])) {
+    $roomType = $_POST['roomType'];
+    if ($roomType !== "All") {
+        $query = "SELECT * FROM booking 
+        INNER JOIN room ON booking.room_id=room.room_id
+        INNER JOIN customer ON booking.customer_id=customer.customer_id 
+        INNER JOIN hotel ON booking.hotel_id=hotel.hotel_id
+        WHERE room.room_type='$roomType' AND booking.hotel_id=" . $_SESSION["hotelID"];
+    } else {
+        $query = "SELECT * FROM booking 
+        INNER JOIN customer ON booking.customer_id=customer.customer_id 
+        INNER JOIN room ON booking.room_id=room.room_id
+        INNER JOIN hotel ON booking.hotel_id=hotel.hotel_id
+        WHERE booking.hotel_id=" . $_SESSION["hotelID"];
+    }
+} else {
+    $roomType = "All"; // Set default value to "All"
+    $query = "SELECT * FROM booking 
+    INNER JOIN customer ON booking.customer_id=customer.customer_id 
+    INNER JOIN room ON booking.room_id=room.room_id
+    INNER JOIN hotel ON booking.hotel_id=hotel.hotel_id
+    WHERE booking.hotel_id=" . $_SESSION["hotelID"];
+}
+$result = mysqli_query($connection, $query);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Booking</h2>
+
+    <form action="#" method="POST">
+        Select Category: 
+            <select name="roomType" onchange="this.form.submit()">
+                <option value="All" <?php if($roomType == 'All') { echo 'selected'; } ?>>All</option>
+                <option value="Single Room" <?php if($roomType == 'Single Room') { echo 'selected'; } ?>>Single Room</option>
+                <option value="Double Room" <?php if($roomType == 'Double Room') { echo 'selected'; } ?>>Double Room</option>
+                <option value="Triple Room" <?php if($roomType == 'Triple Room') { echo 'selected'; } ?>>Triple Room</option>
+                <option value="President Room" <?php if($roomType == 'President Room') { echo 'selected'; } ?>>President Room</option>
+            </select>
+    </form>
+
+    <table border=1>
+        <tr>
+            <th>Booking ID</th>
+            <th>Customer ID</th>
+            <th>Customer Name</th>
+            <th>Room ID</th>
+            <th>Room Type</th>
+            <th>Check In Date</th>
+            <th>Check Out Date</th>
+            <th>Days</th>
+            <th>Service Charge</th>
+            <th>Total</th>
+            <th align="center">Option</th>
+        </tr>
+
+        <?php
+            while ($row = mysqli_fetch_assoc($result)){
+        ?>
+
+        <tr>
+            <th><?php echo $row['booking_id']; ?></th>
+            <th><?php echo $row['customer_id']; ?></th>
+            <th><?php echo $row['customer_name']; ?></th>
+            <th><?php echo $row['room_id']; ?></th>
+            <th><?php echo $row['room_type']; ?></th>
+            <th><?php echo $row['checkin_date']; ?></th>
+            <th><?php echo $row['checkout_date']; ?></th>
+            <th><?php echo $row['day']; ?></th>
+            <th><?php echo $row['service_charge']; ?></th>
+            <th><?php echo $row['total_price']; ?></th>
+            <th align="center">
+                <a href="editBooking.php?bookingID=<?php echo $row['booking_id']; ?>">Edit<i class="fa fa-edit"></i></a>
+                <br/>
+                <a href="deleteBooking.php?bookingID=<?php echo $row['booking_id']; ?>">Cancel<i class="fa fa-remove"></i></a>
+            </th>
+        </tr>
+
+        <?php
+            }
+            mysqli_close($connection);
+        ?>
+
+
+    </table>
+</body>
+</html>

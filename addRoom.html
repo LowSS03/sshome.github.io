@@ -1,0 +1,110 @@
+<?php
+session_start();
+include 'dbConn.php';
+
+
+if (isset($_POST['btnAdd'])){
+    $hotel = $_POST['HotelID'];
+    $image = addslashes(file_get_contents($_FILES['RoomImage']['tmp_name']));
+    $roomDescription = $_POST['RoomDescription'];
+    $roomType = $_POST['RoomType'];
+    $price = $_POST['RoomPrice'];
+    $status = $_POST['RoomStatus'];
+
+    $query = "INSERT INTO `room`(`hotel_id`,`room_image`,`room_description`,`room_type`,`room_price`,`room_status`) VALUES ('$hotel','$image','$roomDescription','$roomType','$price','$status')";
+    if (mysqli_query($connection, $query)){
+        echo '<script>alert("New Room Added")</script>';
+        echo "window.location = 'roomList.php';";
+    } 
+    else {
+        echo '<script>alert("Sorry, Something Went Wrong. Please Try Again.")</script>';
+    }   
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Room</title>
+</head>
+<body>
+    <div id="AddProduct">
+        <h3 class="title">New Room</h3>
+        <form action="#" method="POST" enctype="multipart/form-data">
+            <table>
+                <tr>
+                    <td>Hotel ID : </td>
+                    <td>
+                        <?php echo $_SESSION['hotelID'];?>
+                        <input type="hidden" name="HotelID" value="<?php echo $_SESSION['hotelID'];?> ">
+                    </td>
+                </tr>   
+
+                <tr>
+                    <td>Hotel Name : </td>
+                    <td>
+                        <?php echo $_SESSION['hotelName'];?>
+                    </td>
+                </tr>     
+
+                <tr>
+                    <td>Room Image : </td>
+                    <td>
+                        <img id="imagePreview" src="#" alt="Preview" height="175" width="175" style="display: none;">
+                        <input type="file" name="RoomImage" onchange="previewImage(event)">
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Room Description : </td>
+                    <td>
+                        <input type="text" name="RoomDescription" placeholder="Description">
+                    </td>
+                </tr> 
+
+                <tr>
+                    <td>Room Type : </td>
+                    <td>
+                        <select name="RoomType">
+                            <option value="Single Room">Single Room</option>
+                            <option value="Double Room">Double Room</option>
+                            <option value="Triple Room">Triple Room</option>
+                            <option value="President Room">President Suite</option>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Unit Price (RM)/Day : </td>
+                    <td>
+                        <input type="decimal" name="RoomPrice">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Room Status : </td>
+                    <td>
+                        Available
+                        <input type="hidden" name="RoomStatus" value="Available">
+                    </td>
+                </tr>
+            </table>
+            <input id="btnAdd" type="submit" value="Add Room" name="btnAdd">
+        </form>
+    </div>
+
+    <script>
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var imgElement = document.getElementById('imagePreview');
+                imgElement.src = reader.result;
+                imgElement.style.display = 'block';
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        *{
+            font-family: Times;
+        }
+
+        .nav{
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+            transition: top 0.3s;
+        }
+
+        .menubar1{
+            background: white;
+            height: 70px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title {
+            font-size: 30px;
+            height: 50px;
+            display: inline-block;
+            vertical-align: bottom;
+            list-style-type: none;
+        }
+
+        .btn2, .btn3, .btn4, .btn5, .btn6, .btn7, .btn8, .login {
+            float: right;
+            margin-right: 20px;
+            background: white;
+            color: black;
+            border: none;
+            text-align: center;
+            cursor: pointer;
+            font-size: 16px;
+            height: 29px;
+            width: 100px;
+            list-style-type: none;
+            padding: 20px 0;
+            text-decoration: none;
+            color: black;
+        }
+
+        .btn{
+            text-decoration: none;
+            color: black;
+        }
+
+        .btn2:hover, .btn3:hover, .btn4:hover, .login:hover{
+            background: lightblue;
+            text-decoration: none;
+            border-radius: 50%;
+            border: none;
+            height: 30px;
+            width: 100px;
+            z-index: -1;
+            transition: 0.5s;
+        }
+
+        .btn5:hover, .btn6:hover, .btn7:hover, .btn8:hover{
+            background: lightgreen;
+            text-decoration: none;
+            border-radius: 50%;
+            border: none;
+            height: 30px;
+            width: 100px;
+            z-index: -1;
+            transition: 0.5s;
+        }
+
+        .nav-link{
+            text-decoration: none;
+            color: black;
+        }
+
+        .fa-home, .fa-sign-out, .fa-user {
+            color: black;
+        }
+
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="menubar1">
+            <img src="image/logo5.png" height="60" width="60">
+            <span class="title">BOOKWISE</span>
+            <?php
+                if (!empty($_SESSION['custID'])) {
+                    ?>
+                    <li class="btn6"><a class="nav-link" href="Logout.php">LOGOUT  <i class="fa fa-sign-out fa-lg"></i></a></li>
+                    <li class="btn5"><a class="nav-link"  href="My Account.php"><?php echo $_SESSION['custName']; ?>  <i class="fa fa-user fa-lg"></i></a></li>
+                    <li class="btn2"><a class="btn" href="roomListCard.php">View Booking</a></li>
+                    <li class="btn3"><a class="btn" href="roomListCard.php">Book Room</a></li>
+                    <li class="btn4"><a class="btn" href="menubar.php">Home<a></li>
+                    <?php
+                }
+                elseif (!empty($_SESSION['hotelID'])) {
+                    ?>
+                    <li class="btn6"><a class="nav-link" href="logout.php">LOGOUT  <i class="fa fa-sign-out fa-lg"></i></a></li>
+                    <li class="btn5"><a class="nav-link" href="hotel.php"><?php echo $_SESSION['hotelName']; ?>  <i class="fa fa-user fa-lg"></i></a></li>
+                    <li class="btn2"><a class="btn" href="roomListCard.php">View Room</a></li>
+                    <li class="btn3"><a class="btn" href="roomListCard.php">Add Room</a></li>
+                    <li class="btn4"><a class="btn" href="menubar.php">Home<a></li>
+                <?php
+                }
+                else {
+                    echo '<li class="login"><a class="btn"href="signUp.php">Sign Up</a></li>';
+                    echo '<li class="login"><a class="btn" href="login.php">Login</a></li>';
+                }
+                ?>
+            </li>
+    </div>
+</nav>
+    
+</body>
+</html>
